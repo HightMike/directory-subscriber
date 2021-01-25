@@ -1,0 +1,37 @@
+server:
+  port: 9111
+  error:
+    include-message: always
+spring:
+  application:
+    name: dir-subs
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    jdbcUrl: jdbc:postgresql://${DB_HOST:172.24.14.147}:${DB_PORT:5432}/${DB_NAME:core_service}
+#    username: ${DB_USERNAME:esfl}
+#    password: ${DB_PASSWORD:dsfOR7473MEO}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: core
+  h2:
+    console:
+      enabled: true
+      path: /h2_console
+  datasource:
+    url: jdbc:h2:file:~/h2/testdb
+    username: borisov
+    password:
+flow:
+  tpk:
+    enabled:true
+file:
+  name:
+    localA: marusa
+logging:
+  level:
+    root: WARN
+    ru.borisov: DEBUG
+
