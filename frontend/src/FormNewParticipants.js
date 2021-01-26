@@ -53,17 +53,22 @@ class FormNewParticipants extends React.Component {
 
         if (firstName.length > 0 && lastName.length > 0 && workPhone.length > 0 && !firstNameValidationErrors &&
             !lastNameValidationErrors && !workPhoneValidationErrors) {
-
-            axios.post(`https://localhost:9111/prepare`, {
-                firstName: firstName,
-                lastName: lastName,
-                workPhone: workPhone,
-                mobile: mobile,
-                email: email,
-            })
-                .then(res => {
-                    console.log(res.data)
-                })
+            axios({
+                method: 'post',
+                headers: { 'Content-Type': 'application/json'},
+                url: '/data/prepare',
+                data: {
+                    firstName: firstName,
+                    lastName: lastName,
+                    workPhone: workPhone,
+                    mobile: mobile,
+                    email: email,
+                }
+            }).then( (response)=> {
+                console.log(response.data);
+            }).then( (error)=> {
+                console.log(error);
+            });
         }
     }
 
@@ -154,7 +159,10 @@ class FormNewParticipants extends React.Component {
     }
 
     sendData = () => {
-        axios.put(`https://localhost:9111/move`)
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+        axios.put(`/data/move`,{headers})
             .then(res => {
                 console.log(res.data)
             })

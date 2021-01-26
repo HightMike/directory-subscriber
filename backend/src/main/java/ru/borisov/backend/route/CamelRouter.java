@@ -11,9 +11,6 @@ import static ru.borisov.backend.constants.UserConstants.WORK_DIR;
 @Component
 public class CamelRouter extends RouteBuilder {
 
-//    @Value("${flow.tpk.enable}")
-//    private boolean autoStartup;
-
     @Value("${cron.scheduler}")
     private String scheduler;
 
