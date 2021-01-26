@@ -24,7 +24,6 @@ spring:
 file:
   name:
     work: /static/files/work/test.json
-    data: two
     filePathPrepare: /home/hightmike/testFiles/
 scheduler:
   file:
