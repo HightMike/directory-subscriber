@@ -5,8 +5,10 @@
 Из папки с frontend - npm start
 
 2. Запуск модуля обработки данных (backend)
-Для того, что бы подгрузилась схема валидации необходимо набрать mvn jsonschema2pojo:generate в папке с backend
-Из папки с backend - запуск BackendApplication
+
+Для того, что бы подгрузилась схема валидации необходимо набрать mvn jsonschema2pojo:generate в папке backend.
+
+Запуск модуля происходит из папки backend - запуск BackendApplication
 
 В resources/application.yml лежат настройки проекта:
 
