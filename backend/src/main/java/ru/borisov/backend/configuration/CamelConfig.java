@@ -9,7 +9,6 @@ import ru.borisov.backend.route.CamelRouter;
 @Configuration
 public class CamelConfig {
 
-
     @Bean
     public CamelContext camelContextTemplate(CamelRouter camelRouter) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
