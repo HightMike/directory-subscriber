@@ -23,7 +23,6 @@ spring:
     auto-startup: true
 file:
   name:
-    work: /static/files/work/test.json
     filePathPrepare: /home/hightmike/testFiles/
 scheduler:
   file:
