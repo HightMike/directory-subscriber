@@ -9,18 +9,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class CamelRouter extends RouteBuilder {
 
-    private final CamelContext camelContext;
+//    private final CamelContext camelContext;
 
-    @Value("${flow.tpk.enable}")
-    private boolean autoStartup;
+//    @Value("${flow.tpk.enable}")
+//    private boolean autoStartup;
 
-    @Autowired
-    public CamelRouter(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
+    @Value("${cron.scheduler}")
+    private String scheduler;
+
+    @Value("${file.name.data}")
+    private String data;
+//    @Autowired
+//    public CamelRouter(CamelContext camelContext) {
+//        this.camelContext = camelContext;
+//    }
 
     @Override
     public void configure(){
+//        from("file:/static/files/work?scheduler=quartz2&scheduler.cron="+scheduler)
+        from("file:/static/files/work")
+                .routeId("file processing")
+                .convertBodyTo(String.class)
+                .setBody(simple("Start task at ${date:now:yyyy-MM-dd'T'HH:mm:ssZ}"))
+                .choice()
+                    .when(exchange -> ((String) exchange.getIn().getBody()).contains("test"))
+                        .to("file:"+data);
+//        camelContext.start();
         //TODO написать маршруты
     }
 }

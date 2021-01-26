@@ -24,12 +24,19 @@ spring:
     url: jdbc:h2:file:~/h2/testdb
     username: borisov
     password:
+camel:
+  springboot:
+    main-run-controller:true
 flow:
   tpk:
     enabled:true
 file:
   name:
-    localA: marusa
+    work: /static/files/work/test.json
+    data: two
+    filePathPrepare: /static/files/prepare/dataPrepare.json
+cron:
+  scheduler: 0/9+*+*+*+*+?
 logging:
   level:
     root: WARN
