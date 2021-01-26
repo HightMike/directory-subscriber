@@ -113,7 +113,7 @@ public class UserInfoService {
 
     }
 
-    public void checkFile(Object body) {
+    public boolean checkFile(Object body) {
 
         if (!body.equals("")) {
             UserInfo userInfoRequest = null;
@@ -133,6 +133,8 @@ public class UserInfoService {
                 log.info(e.getMessage());
             }
             System.out.println(userInfoRequest);
+            return true;
         }
+        return false;
     }
 }

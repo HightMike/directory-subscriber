@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.borisov.backend.service.UserInfoService;
 
+import java.io.IOException;
+
 @Component
 public class CamelRouter extends RouteBuilder {
 
@@ -32,10 +34,17 @@ public class CamelRouter extends RouteBuilder {
                 .routeId("FileProcessingRoute")
                 .convertBodyTo(String.class)
                 .log(LoggingLevel.INFO, "route started"+simple("Start task at ${date:now:yyyy-MM-dd'T'HH:mm:ssZ}"))
-                .process(exchange -> {
-                    userInfoService.checkFile(exchange.getIn().getBody());
-                })
-                .end();
-//                .to("file:/home/hightmike/testFiles/data/");
+                .choice()
+                .when(exchange -> userInfoService.checkFile(exchange.getIn().getBody()))
+                    .to("file:/home/hightmike/testFiles/data/")
+                .otherwise()
+                    .to("file:/home/hightmike/testFiles/invalid/")
+                .end()
+
+                .onException(IOException.class)
+                .handled(true)
+                .log("IOException occurred due: ${exception.message}")
+                .transform().simple("Error ${exception.message}")
+                .to("file:/home/hightmike/testFiles/invalid/");
     }
 }
