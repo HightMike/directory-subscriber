@@ -88,6 +88,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-quartz</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-quartz2</artifactId>
             <version>2.25.3</version>
             <scope>test</scope>
@@ -115,6 +120,36 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <configuration>
+                    <annotationStyle>jackson2</annotationStyle>
+                    <constructorsRequiredPropertiesOnly>true</constructorsRequiredPropertiesOnly>
+                    <generateBuilders>true</generateBuilders>
+                    <includeSetters>true</includeSetters>
+                    <includeGetters>true</includeGetters>
+                    <includeHashcodeAndEquals>true</includeHashcodeAndEquals>
+                    <includeJsr303Annotations>true</includeJsr303Annotations>
+                    <initializeCollections>true</initializeCollections>
+                    <useDoubleNumbers>true</useDoubleNumbers>
+                    <usePrimitives>true</usePrimitives>
+                    <useLongIntegers>true</useLongIntegers>
+                    <sourceDirectory>src/main/resources/schema</sourceDirectory>
+                    <outputDirectory>src/main/java</outputDirectory>
+                    <targetPackage>ru.borisov.backend.schema</targetPackage>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scheme-generate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

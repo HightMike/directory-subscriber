@@ -1,5 +1,7 @@
 package ru.borisov.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.everit.json.schema.Schema;
@@ -11,7 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.borisov.backend.dto.UserInfoDto;
+import ru.borisov.backend.schema.UserInfo;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
+import javax.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +27,9 @@ import java.nio.file.StandardOpenOption;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.borisov.backend.constants.UserConstants.JSONDATA;
 import static ru.borisov.backend.constants.UserConstants.PREPARE;
@@ -32,14 +41,17 @@ import static ru.borisov.backend.constants.UserConstants.WORK_DIR;
 public class UserInfoService {
 
     private final ObjectMapper objectMapper;
+    private final Validator validator;
+
 
     @Value("${file.name.filePathPrepare}")
     private String filePathPrepare;
 
 
     @Autowired
-    public UserInfoService() {
+    public UserInfoService(Validator validator) {
         this.objectMapper = new ObjectMapper();
+        this.validator = validator;
     }
 
     public void savePrepare(UserInfoDto request) {
@@ -101,4 +113,26 @@ public class UserInfoService {
 
     }
 
+    public void checkFile(Object body) {
+
+        if (!body.equals("")) {
+            UserInfo userInfoRequest = null;
+            try {
+                userInfoRequest = objectMapper.readValue(body.toString(),UserInfo.class);
+                Set<ConstraintViolation<UserInfo>> constraintViolations = validator.validate(userInfoRequest);
+                if (constraintViolations.size() > 0) {
+                    log.error("Body validation failed");
+                    throw new IllegalArgumentException("Incorrect request body. Description: " +
+                            constraintViolations
+                                    .stream()
+                                    .map(ConstraintViolation::toString)
+                                    .collect(Collectors.joining(System.lineSeparator())));
+                }
+                log.debug("Validation success");
+            } catch (JsonProcessingException e) {
+                log.info(e.getMessage());
+            }
+            System.out.println(userInfoRequest);
+        }
+    }
 }
