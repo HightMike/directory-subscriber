@@ -3,6 +3,7 @@ package ru.borisov.backend.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,12 @@ public class UserInfoController {
             @RequestBody UserInfoDto request) {
         userInfoService.savePrepare(request);
         log.info("doc prepare");
+    }
+
+    @PutMapping(value = "/move")
+    public void moveDoc() {
+        userInfoService.moveFile();
+        log.info("move file complete");
     }
 
 

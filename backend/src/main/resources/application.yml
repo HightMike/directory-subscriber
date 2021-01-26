@@ -34,7 +34,7 @@ file:
   name:
     work: /static/files/work/test.json
     data: two
-    filePathPrepare: /static/files/prepare/dataPrepare.json
+    filePathPrepare: /home/hightmike/testFiles/
 cron:
   scheduler: 0/9+*+*+*+*+?
 logging:
