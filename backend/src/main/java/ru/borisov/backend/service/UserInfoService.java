@@ -67,7 +67,7 @@ public class UserInfoService {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
             File mFile = createFile(PREPARE, JSONDATA);
             Files.write(mFile.toPath(), Collections.singletonList(json), StandardOpenOption.WRITE);
-            return new ResponseMessage(RESULT_SUCCESS, DESCRIPTION_SUCCESS + "save to prepare folder's");
+            return new ResponseMessage(RESULT_SUCCESS, DESCRIPTION_SUCCESS + " save to prepare folder's");
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseMessage(RESULT_WRONG, DESCRIPTION_WRONG + " data not saved");
@@ -106,7 +106,7 @@ public class UserInfoService {
                 log.info("file moved successfully");
                 createFile(WORK_DIR, "json_".concat(time).concat(".ready"));
                 log.info("create flag file");
-                return new ResponseMessage(RESULT_SUCCESS, DESCRIPTION_SUCCESS + "move to folder");
+                return new ResponseMessage(RESULT_SUCCESS, DESCRIPTION_SUCCESS + " move to folder");
             } else {
                 log.info("file not exists");
                 return new ResponseMessage(RESULT_WRONG, DESCRIPTION_WRONG + " file not found in target dir");
