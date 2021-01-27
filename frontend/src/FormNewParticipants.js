@@ -27,6 +27,9 @@ class FormNewParticipants extends React.Component {
             workPhoneValidationErrors: '',
             emailValidationErrors: '',
             mobailValidationErrors: '',
+
+            messageAboutPrepare: '',
+            messageAboutMove: '',
         }
     }
 
@@ -53,9 +56,10 @@ class FormNewParticipants extends React.Component {
 
         if (firstName.length > 0 && lastName.length > 0 && workPhone.length > 0 && !firstNameValidationErrors &&
             !lastNameValidationErrors && !workPhoneValidationErrors) {
+
             axios({
                 method: 'post',
-                headers: { 'Content-Type': 'application/json'},
+                headers: {'Content-Type': 'application/json'},
                 url: '/data/prepare',
                 data: {
                     firstName: firstName,
@@ -63,12 +67,15 @@ class FormNewParticipants extends React.Component {
                     workPhone: workPhone,
                     mobile: mobile,
                     email: email,
-                }
-            }).then( (response)=> {
-                console.log(response.data);
-            }).then( (error)=> {
-                console.log(error);
-            });
+                },
+            }).then((response) => {
+                const {resultDescription} = response.data
+                this.setState({
+                    messageAboutPrepare: resultDescription,
+                })
+            }).then((error) => {
+                console.log(error)
+            })
         }
     }
 
@@ -161,10 +168,17 @@ class FormNewParticipants extends React.Component {
     sendData = () => {
         const headers = {
             'Content-Type': 'application/json',
-        };
-        axios.put(`/data/move`,{headers})
-            .then(res => {
-                console.log(res.data)
+        }
+
+        axios.put(`/data/move`, {headers})
+            .then(response => {
+                const {resultDescription} = response.data
+                this.setState({
+                    messageAboutMove: resultDescription,
+                })
+            })
+            .then((error) => {
+                console.log(error)
             })
     }
 
@@ -181,6 +195,8 @@ class FormNewParticipants extends React.Component {
             workPhoneValidationErrors,
             emailValidationErrors,
             mobailValidationErrors,
+            messageAboutPrepare,
+            messageAboutMove,
         } = this.state
 
         return (
@@ -264,6 +280,9 @@ class FormNewParticipants extends React.Component {
                         </div>
                     </form>
                 </div>
+
+                {messageAboutPrepare && <div className={messageAboutPrepare ? 'notification__show' : 'notification'}>{messageAboutPrepare}</div>}
+                {messageAboutMove && <div className={messageAboutMove ? 'notification__show' : 'notification'}>{messageAboutMove}</div>}
             </>
         )
     }
