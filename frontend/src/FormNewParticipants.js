@@ -3,6 +3,7 @@ import InputMask from 'react-input-mask'
 import './FormNewParticipants.css'
 import logo from './images/logo.png'
 import axios from 'axios'
+import Snackbar from '@material-ui/core/Snackbar'
 
 export const PHONE_NUMBER = /^\d{3}-?\d{3}-?\d{2}-?\d{2}$/
 
@@ -28,8 +29,8 @@ class FormNewParticipants extends React.Component {
             emailValidationErrors: '',
             mobailValidationErrors: '',
 
-            messageAboutPrepare: '',
-            messageAboutMove: '',
+            message:'',
+            openSnackbar: false,
         }
     }
 
@@ -69,9 +70,11 @@ class FormNewParticipants extends React.Component {
                     email: email,
                 },
             }).then((response) => {
+
                 const {resultDescription} = response.data
                 this.setState({
-                    messageAboutPrepare: resultDescription,
+                    message: resultDescription,
+                    openSnackbar: true,
                 })
             }).then((error) => {
                 console.log(error)
@@ -174,12 +177,19 @@ class FormNewParticipants extends React.Component {
             .then(response => {
                 const {resultDescription} = response.data
                 this.setState({
-                    messageAboutMove: resultDescription,
+                    message: resultDescription,
+                    openSnackbar: true
                 })
             })
             .then((error) => {
                 console.log(error)
             })
+    }
+
+    closeSnackbar=()=>{
+        this.setState({
+            openSnackbar: false,
+        })
     }
 
     render() {
@@ -195,8 +205,9 @@ class FormNewParticipants extends React.Component {
             workPhoneValidationErrors,
             emailValidationErrors,
             mobailValidationErrors,
-            messageAboutPrepare,
-            messageAboutMove,
+
+            openSnackbar,
+            message
         } = this.state
 
         return (
@@ -280,12 +291,22 @@ class FormNewParticipants extends React.Component {
                         </div>
                     </form>
                 </div>
-
-                {messageAboutPrepare && <div className={messageAboutPrepare ? 'notification__show' : 'notification'}>{messageAboutPrepare}</div>}
-                {messageAboutMove && <div className={messageAboutMove ? 'notification__show' : 'notification'}>{messageAboutMove}</div>}
+                {
+                    message.length > 0 && (
+                    <Snackbar
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "left"
+                        }}
+                        open={openSnackbar}
+                        autoHideDuration={3000}
+                        onClose={this.closeSnackbar}
+                        message={message }
+                    />)
+                }
             </>
         )
     }
 }
 
-export default FormNewParticipants
+export default FormNewParticipants;
