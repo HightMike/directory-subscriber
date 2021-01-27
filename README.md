@@ -8,6 +8,8 @@
 
 Для того, что бы подгрузилась схема валидации необходимо набрать mvn jsonschema2pojo:generate в папке backend.
 
+Перед тестированием обогощения данных полем work_address необходимо заполнить бд h2 - id, firstName, lastName, work_address. Запись можно осуществить через h2_console, которая находится по адресу http://localhost:9111/h2_console
+
 Запуск модуля происходит из папки backend - запуск BackendApplication
 
 В resources/application.yml лежат настройки проекта:
