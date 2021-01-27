@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.borisov.backend.dto.UserInfoDto;
+import ru.borisov.backend.responce.ResponseMessage;
 import ru.borisov.backend.service.UserInfoService;
 
 @Slf4j
@@ -21,17 +22,24 @@ public class UserInfoController {
 
     }
 
+    /**
+     * Метод предназначенный для подготовки данных и сохранении их в папку prepare
+     * @param request - запрос данными с данными с формы
+     * @author - hightmike
+     */
     @PostMapping(value = "/prepare")
-    public void prepareDoc(
+    public ResponseMessage prepareDoc(
             @RequestBody UserInfoDto request) {
-        userInfoService.savePrepare(request);
-        log.info("doc prepared");
+        return userInfoService.savePrepare(request);
     }
 
+    /**
+     * Метод предназначенный для перемещения файла в папку work и его переименовывании. Добавляет к названии дату и время
+     * @author - hightmike
+     */
     @PutMapping(value = "/move")
-    public void moveDoc() {
-        userInfoService.moveFile();
-        log.info("move file complete");
+    public ResponseMessage moveDoc() {
+        return userInfoService.moveFile();
     }
 
 }

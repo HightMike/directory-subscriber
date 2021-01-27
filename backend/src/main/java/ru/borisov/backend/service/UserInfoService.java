@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import ru.borisov.backend.dto.UserInfoDto;
 import ru.borisov.backend.entity.UserInfoEntity;
 import ru.borisov.backend.repository.UserInfoRepository;
+import ru.borisov.backend.responce.ResponseMessage;
 import ru.borisov.backend.schema.UserInfo;
 
 import javax.validation.ConstraintViolation;
@@ -26,8 +27,12 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static ru.borisov.backend.constants.UserConstants.DESCRIPTION_SUCCESS;
+import static ru.borisov.backend.constants.UserConstants.DESCRIPTION_WRONG;
 import static ru.borisov.backend.constants.UserConstants.JSONDATA;
 import static ru.borisov.backend.constants.UserConstants.PREPARE;
+import static ru.borisov.backend.constants.UserConstants.RESULT_SUCCESS;
+import static ru.borisov.backend.constants.UserConstants.RESULT_WRONG;
 import static ru.borisov.backend.constants.UserConstants.TIME_PATTERN;
 import static ru.borisov.backend.constants.UserConstants.WORK_DIR;
 
@@ -52,19 +57,26 @@ public class UserInfoService {
         this.userInfoRepository = userInfoRepository;
     }
 
-    public void savePrepare(UserInfoDto request) {
+    public ResponseMessage savePrepare(UserInfoDto request) {
         try {
             log.info("start to save data in file");
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
             File mFile = createFile(PREPARE, JSONDATA);
             Files.write(mFile.toPath(), Collections.singletonList(json), StandardOpenOption.WRITE);
+            return new ResponseMessage(RESULT_SUCCESS, DESCRIPTION_SUCCESS);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException("data not saved" + e.getMessage());
+            return new ResponseMessage(RESULT_WRONG, DESCRIPTION_WRONG + " data not saved");
         }
 
     }
 
+    /**
+     *
+     * @param folderName - имя папки где будет создаваться файл
+     * @param fileName - имя файла
+     * @return - файл, который содрежит путь до него
+     */
     private File createFile(String folderName, String fileName) throws IOException {
         log.info("start to create dir and docFile");
         File folder = new File(filePathPrepare+folderName);
@@ -76,7 +88,11 @@ public class UserInfoService {
         return mFile;
     }
 
-    public void moveFile() {
+    /**
+     * метод перемещает файл в папку work и создает пустой файл флаг включая время в формате ddMMyy_HHmm
+     * @return - респонс с описанием
+     */
+    public ResponseMessage moveFile() {
         try {
             log.info("start to move docFile");
             File file = new File(filePathPrepare+PREPARE.concat("/").concat(JSONDATA));
@@ -87,17 +103,23 @@ public class UserInfoService {
                 log.info("file moved successfully");
                 createFile(WORK_DIR, "json_".concat(time).concat(".ready"));
                 log.info("create flag file");
+                return new ResponseMessage(RESULT_SUCCESS, DESCRIPTION_SUCCESS);
             } else {
                 log.info("file not exists");
-                throw new RuntimeException("file not found in target dir");
+                return new ResponseMessage(RESULT_WRONG, DESCRIPTION_WRONG + " file not found in target dir");
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException("file not moved" + e.getMessage());
+            return new ResponseMessage(RESULT_WRONG, DESCRIPTION_WRONG + " file not moved" + e.getMessage());
         }
 
     }
 
+    /**
+     * метод валидирует данные по json схеме
+     * @param body - тело файла
+     * @return - прошла ли успешно валидация
+     */
     public boolean checkFile(Object body) {
 
         if (!body.equals("")) {
@@ -123,6 +145,11 @@ public class UserInfoService {
         return true;
     }
 
+    /**
+     * метод добавляет в тело значение из work_address по имени и фамилии
+     * @param body - тело файла
+     * @return - измененное тело файла, которое дальше записывается в новый файл и новую папку - done
+     */
     public Object loadWorkData(Object body) {
 
         try {
