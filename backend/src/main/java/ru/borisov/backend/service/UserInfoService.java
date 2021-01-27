@@ -129,6 +129,12 @@ public class UserInfoService {
             UserInfo userInfoRequest = null;
             try {
                 userInfoRequest = objectMapper.readValue(body.toString(),UserInfo.class);
+                if (userInfoRequest.getMobile()!=null && userInfoRequest.getWorkPhone()!=null) {
+                    if(!userInfoRequest.getMobile().substring(0,3).equals(userInfoRequest.getWorkPhone().substring(0,3))) {
+                        log.error("phones code is not equals");
+                        return false;
+                    }
+                }
                 Set<ConstraintViolation<UserInfo>> constraintViolations = validator.validate(userInfoRequest);
                 if (constraintViolations.size() > 0) {
                     log.error("Body validation failed"+ ("Incorrect request body. Description: " +

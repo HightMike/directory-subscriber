@@ -30,7 +30,7 @@ public class UserInfoDto {
             regexp = "^\\d{3}-?\\d{3}-?\\d{2}-?\\d{2}$",
             message = "Invalid phone format!"
     )
-    private String mobilePhone;
+    private String mobile;
 
     @Pattern(
             regexp = "^([\\w\\.\\-]+)@([\\w\\-]+)$",
