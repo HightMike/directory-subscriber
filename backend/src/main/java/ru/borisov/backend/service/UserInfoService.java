@@ -3,31 +3,26 @@ package ru.borisov.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.borisov.backend.dto.UserInfoDto;
+import ru.borisov.backend.entity.UserInfoEntity;
+import ru.borisov.backend.repository.UserInfoRepository;
 import ru.borisov.backend.schema.UserInfo;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
 import javax.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +37,7 @@ public class UserInfoService {
 
     private final ObjectMapper objectMapper;
     private final Validator validator;
+    private final UserInfoRepository userInfoRepository;
 
 
     @Value("${file.name.filePathPrepare}")
@@ -49,9 +45,11 @@ public class UserInfoService {
 
 
     @Autowired
-    public UserInfoService(Validator validator) {
+    public UserInfoService(Validator validator,
+                           UserInfoRepository userInfoRepository) {
         this.objectMapper = new ObjectMapper();
         this.validator = validator;
+        this.userInfoRepository = userInfoRepository;
     }
 
     public void savePrepare(UserInfoDto request) {
@@ -126,15 +124,22 @@ public class UserInfoService {
         return true;
     }
 
-    public void loadData(Object body) {
+    public Object loadWorkData(Object body) {
 
         try {
-            UserInfo userInfoRequest = objectMapper.readValue(body.toString(),UserInfo.class);
+            UserInfo userInfoRequest = objectMapper.readValue(body.toString(), UserInfo.class);
+            UserInfoEntity entity = userInfoRepository.getByFirstNameAndLastName(userInfoRequest.getFirstName(), userInfoRequest.getLastName());
+            if (entity!=null) {
+                JsonNode node = objectMapper.valueToTree(userInfoRequest);
+                ObjectNode objNode = (ObjectNode) node;
+                objNode.put("workAddress",entity.getWorkAddress());
+                log.info("workAddress is added");
+                return objNode;
+            }
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
         }
-
-        log.info("file save to done success");
-
+        log.info("entity not found, write empty file");
+        return objectMapper.createObjectNode();
     }
 }

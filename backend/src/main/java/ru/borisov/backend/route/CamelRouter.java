@@ -29,7 +29,9 @@ public class CamelRouter extends RouteBuilder {
     @Override
     public void configure(){
 
-        from("file:{{file.name.filePathPrepare}}work/?scheduler=quartz&scheduler.cron={{scheduler.file.cron}}")
+        from("file:{{file.name.filePathPrepare}}work/?scheduler=quartz&scheduler.cron={{scheduler.file.cron}}"
+                +"?includeExt=txt"
+                + "?doneFileName=${file:name}.ready")
                 .autoStartup(true)
                 .routeId("FileProcessingRoute")
                 .convertBodyTo(String.class)
@@ -37,11 +39,14 @@ public class CamelRouter extends RouteBuilder {
                 .choice()
                 .when(exchange -> userInfoService.checkFile(exchange.getIn().getBody()))
                     .to("file:{{file.name.filePathPrepare}}data/")
-                    .process(exchange -> userInfoService.loadData(exchange.getIn().getBody()))
+                    .process(exchange -> {
+                        Object node = userInfoService.loadWorkData(exchange.getIn().getBody());
+                        exchange.getIn().setBody(node.toString());
+                    })
+                    .to("file:{{file.name.filePathPrepare}}done/")
                 .otherwise()
                     .to("file:{{file.name.filePathPrepare}}invalid/")
                 .end()
-
                 .onException(IOException.class)
                 .handled(true)
                 .log("IOException occurred due: ${exception.message}")
