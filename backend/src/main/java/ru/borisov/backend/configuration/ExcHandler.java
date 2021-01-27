@@ -21,7 +21,7 @@ public class ExcHandler extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:error")
-                .to("log:error")
+                .to("file:{{file.name.filePathPrepare}}invalid/")
                 .end();
     }
 }

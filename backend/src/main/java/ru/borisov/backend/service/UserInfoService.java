@@ -101,18 +101,17 @@ public class UserInfoService {
     public boolean checkFile(Object body) {
 
         if (!body.equals("")) {
-            //TODO сделать проверку на одинаковые файлы
             UserInfo userInfoRequest = null;
             try {
                 userInfoRequest = objectMapper.readValue(body.toString(),UserInfo.class);
                 Set<ConstraintViolation<UserInfo>> constraintViolations = validator.validate(userInfoRequest);
                 if (constraintViolations.size() > 0) {
-                    log.error("Body validation failed");
-                    throw new IllegalArgumentException("Incorrect request body. Description: " +
+                    log.error("Body validation failed"+ ("Incorrect request body. Description: " +
                             constraintViolations
                                     .stream()
                                     .map(ConstraintViolation::toString)
-                                    .collect(Collectors.joining(System.lineSeparator())));
+                                    .collect(Collectors.joining(System.lineSeparator()))));
+                    return false;
                 }
                 log.info("Validation success");
             } catch (JsonProcessingException e) {
