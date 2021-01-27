@@ -24,7 +24,7 @@ public class UserInfoController {
 
     /**
      * Метод предназначенный для подготовки данных и сохранении их в папку prepare
-     * @param request - запрос данными с данными с формы
+     * @param request - запрос с данными с формы
      * @author - hightmike
      */
     @PostMapping(value = "/prepare")

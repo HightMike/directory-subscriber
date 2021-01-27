@@ -57,6 +57,10 @@ public class UserInfoService {
         this.userInfoRepository = userInfoRepository;
     }
 
+    /**
+     * Метод предназначенный для подготовки данных и сохранении их в папку prepare
+     * @param request - запрос с данными с формы
+     */
     public ResponseMessage savePrepare(UserInfoDto request) {
         try {
             log.info("start to save data in file");
