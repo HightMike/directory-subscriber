@@ -26,6 +26,12 @@ public class CamelRouter extends RouteBuilder {
     @Value("${file.name.filePathPrepare}")
     private String filePathPrepare;
 
+    /**
+     * основной маршрут приложения
+     * exclude -  исключает файлы флаги с расширением .ready из дальнейшего пробрасывания по папкам
+     * doneFileName - фильтрует маршрут для файлов для которых есть пара с таким же названием и расширением .ready
+     * cron - запускает маршрут по планировщику
+     */
     @Override
     public void configure(){
 

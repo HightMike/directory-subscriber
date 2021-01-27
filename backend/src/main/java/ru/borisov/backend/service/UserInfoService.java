@@ -68,7 +68,6 @@ public class UserInfoService {
             log.error(e.getMessage());
             return new ResponseMessage(RESULT_WRONG, DESCRIPTION_WRONG + " data not saved");
         }
-
     }
 
     /**
